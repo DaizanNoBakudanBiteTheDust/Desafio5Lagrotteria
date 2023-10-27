@@ -1,6 +1,7 @@
 import {
         Router
 } from 'express';
+import { productsModel } from '../../models/products.models.js';
 import ProductManager from '../../managers/productManager.js';
 import { productsFilePath } from '../../utils.js';
 const manager = new ProductManager(productsFilePath);
@@ -8,7 +9,13 @@ const manager = new ProductManager(productsFilePath);
 
 const router = Router();
 
-// traer todos los productos
+
+router.get('/', async (req, res) => {
+        const products = await productsModel.find();
+        res.send({products})
+});
+
+// traer todos los productos (antiguo)
 /*
 router.get('/', async (req, res) => {
         const products = await manager.getProducts();
