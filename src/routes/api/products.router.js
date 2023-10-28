@@ -4,7 +4,7 @@ import {
 import {
         productsModel
 } from '../../models/products.models.js';
-import ProductManager from '../../managers/productManager.js';
+import ProductManager from '../../dao/fileManagers/productManager.js';
 import {
         productsFilePath
 } from '../../utils.js';
@@ -209,7 +209,12 @@ router.delete('/:pid', async (req, res) => {
         const {pid} = req.params;
 
         try {
-                const result = await productsModel.deleteOne({ _id: pid }, updateProduct);
+                const result = await productsModel.deleteOne({ _id: pid });
+                res.send({
+                        status: 'success',
+                        message: 'product deleted',
+                        result
+                });
         } catch (error) {
                 return res.status(404).send({
                         status: 'error',
