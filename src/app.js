@@ -14,7 +14,7 @@ import viewsRouter from './routes/web/views.router.js';
 
 //para el socket
 
-import ProductManager from './managers/productManager.js';
+import ProductManager from './dao/fileManagers/productManager.js';
 import {
         productsFilePath
 } from './utils.js';

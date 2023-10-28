@@ -3,7 +3,7 @@ import {
 } from 'express'
 import { productsFilePath } from '../../utils.js';
 
-import ProductManager from '../../managers/productManager.js';
+import ProductManager from '../../dao/fileManagers/productManager.js';
 
 
 const router = Router();

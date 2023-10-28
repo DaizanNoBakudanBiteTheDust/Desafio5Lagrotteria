@@ -1,7 +1,7 @@
 import {
         Router
 } from 'express';
-import cartManager from '../../managers/cartManager.js';
+import cartManager from '../../dao/fileManagers/cartManager.js';
 import {
         cartsFilePath
 } from '../../utils.js';
