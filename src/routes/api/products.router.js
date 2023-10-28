@@ -204,13 +204,24 @@ router.put('/:pid', async (req, res) => {
 
 router.delete('/:pid', async (req, res) => {
 
-        const products = await manager.getProducts();
+      // obsoleto por ahora  const products = await manager.getProducts();
         const io = req.app.get('socketio');
-        const productId = Number(req.params.pid);
+        const {pid} = req.params;
+
+        try {
+                const result = await productsModel.deleteOne({ _id: pid }, updateProduct);
+        } catch (error) {
+                return res.status(404).send({
+                        status: 'error',
+                        error: 'product not exist'
+                })
+        }
+
+        /*
         const index = products.findIndex(product => product.id === productId);
 
         if (index !== -1) {
-                await manager.deleteProductById(productId);
+                
                 const updatedProducts = await manager.getProducts();
                 io.emit('showProducts', updatedProducts);
                 res.send({
@@ -225,6 +236,7 @@ router.delete('/:pid', async (req, res) => {
                         error: 'product not exist'
                 })
         }
+        */
 })
 
 
