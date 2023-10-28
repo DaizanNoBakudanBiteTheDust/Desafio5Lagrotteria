@@ -1,15 +1,16 @@
 import {
         Router
 } from 'express';
-import {
-        productsModel
-} from '../../dao/dbManagers/models/products.models.js';
-import ProductManager from '../../dao/fileManagers/productManager.js';
+//import ProductManager from '../../dao/fileManagers/productManager.js';
 import {
         productsFilePath
 } from '../../utils.js';
-const manager = new ProductManager(productsFilePath);
+import { productsModel } from '../../dao/dbManagers/models/products.models.js';
+import Products from '../../dao/dbManagers/products.manager.js';
 
+// const manager = new ProductManager(productsFilePath);
+
+const manager = new Products();
 
 const router = Router();
 
@@ -17,7 +18,7 @@ const router = Router();
 //read
 
 router.get('/', async (req, res) => {
-        const products = await productsModel.find();
+        const products = await manager.getAll();
         res.send({
                 products
         })
@@ -62,7 +63,7 @@ router.post('/', async (req, res) => {
         const io = req.app.get('socketio');
         const product = req.body;
 
-        if (!product.titulo || !product.descripcion || !product.precio || !product.thumbnail || !product.thumbnail || !product.code || !product.stock || !product.category) {
+        if (!product.titulo || !product.descripcion || !product.precio || !product.status || !product.thumbnail || !product.code || !product.stock || !product.category) {
                 //Error del cliente
                 return res.status(400).send({
                         status: 'error',
@@ -73,22 +74,13 @@ router.post('/', async (req, res) => {
         // lo utilizare por ahora pero esto debiera traerlo  manager
 
         try {
-                const existingProduct = await productsModel.findOne({
-                        code: product.code
-                });
 
-                if (existingProduct) {
-                        return res.status(409).send({
-                                status: 'error',
-                                error: 'El producto con este código ya existe.'
-                        });
-                }
-
-                // Crea un nuevo documento utilizando productsModel.Create
-                const createdProduct = await productsModel.create({
+                // Crea un nuevo documento utilizando manager.Create
+                const createdProduct = await manager.save({
                         titulo: product.titulo,
                         descripcion: product.descripcion,
                         precio: product.precio,
+                        status: product.status,
                         thumbnail: product.thumbnail,
                         code: product.code,
                         stock: product.stock,

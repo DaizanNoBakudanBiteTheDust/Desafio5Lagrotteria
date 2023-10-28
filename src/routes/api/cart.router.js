@@ -9,7 +9,7 @@ import Carts from '../../dao/dbManagers/cart.manager.js';
 
 // MANAGER ANTIGUO const manager = new cartManager(cartsFilePath); 
 
-manager = new Carts(); // por ahora usaremos este
+const manager = new Carts(); // por ahora usaremos este
 
 const router = Router();
 
@@ -17,7 +17,6 @@ const router = Router();
 // traer todos los productos
 
 router.get('/', async (req, res) => {
-        res.send(carts)
         try {
                 const carts = await manager.getAll();
                 return res.send({

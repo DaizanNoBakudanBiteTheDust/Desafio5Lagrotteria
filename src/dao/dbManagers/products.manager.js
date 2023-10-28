@@ -1,7 +1,9 @@
-import { productsModel } from "../fileManagers/dbManagers/models/models/products.models";
+import {
+    productsModel
+} from "./models/products.models.js";
 
 export default class Products {
-    constructor(){
+    constructor() {
         console.log("db trabajando")
     }
 
@@ -12,7 +14,22 @@ export default class Products {
     }
 
     save = async (product) => {
+
+        const existingProduct = await productsModel.findOne({
+            code: product.code
+        });
+
+        if (existingProduct) {
+            return res.status(409).send({
+                status: 'error',
+                error: 'El producto con este código ya existe.'
+            });
+        }
+        // se agrega el producto
+
         const result = await productsModel.create(product);
+
         return result;
     }
+
 }

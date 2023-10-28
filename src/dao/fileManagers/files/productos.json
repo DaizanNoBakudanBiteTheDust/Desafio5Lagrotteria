@@ -119,5 +119,15 @@
 		"stock": 12,
 		"category": "general",
 		"id": 5
+	},
+	{
+		"titulo": "marco",
+		"descripcion": "polo",
+		"precio": 20,
+		"status": "true",
+		"thumbnail": "gaor",
+		"code": "QQ4MH3",
+		"stock": 2,
+		"category": "general"
 	}
 ]

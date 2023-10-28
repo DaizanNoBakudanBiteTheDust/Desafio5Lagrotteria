@@ -14,11 +14,13 @@ import viewsRouter from './routes/web/views.router.js';
 
 //para el socket
 
-import ProductManager from './dao/fileManagers/productManager.js';
-import {
-        productsFilePath
-} from './utils.js';
-const manager = new ProductManager(productsFilePath);
+import Products from './dao/dbManagers/products.manager.js';
+
+// import ProductManager from './dao/fileManagers/productManager.js';
+
+
+// const manager = new ProductManager(productsFilePath);
+  const prodManager = new Products();
 
 
 // Crea server express
@@ -72,17 +74,17 @@ io.on('connection', socket => {
 
         //agrego producto via form
         socket.on('agregarProducto', async data => {
-                manager.addProducts(data);
-                io.emit('showProducts', await manager.getProducts());
+                prodManager.save(data);
+                io.emit('showProducts', await prodManager.getAll());
         });
-
+/*
         //elimino via form que me pasa el cliente
         socket.on('eliminarProducto', async (data) => {
 
                 const id = Number(data)
-                await manager.deleteProductById(id);
-                io.emit('showProducts', await manager.getProducts());
+                await prodManager.delete(id);
+                io.emit('showProducts', await prodManager.getAll());
 
         });
-
+*/
 });

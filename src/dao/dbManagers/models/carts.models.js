@@ -9,4 +9,4 @@ const cartsSchema = new mongoose.Schema({
     }
 })
 
-export const cartsModel = mongoose.model(cartsCollection. cartsSchema)
+export const cartsModel = mongoose.model(cartsCollection, cartsSchema)
