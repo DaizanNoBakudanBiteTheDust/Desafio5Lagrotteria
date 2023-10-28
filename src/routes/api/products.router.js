@@ -107,56 +107,61 @@ router.post('/', async (req, res) => {
                 return res.status(500).send({
                         status: 'error',
                         error: error.message || 'Error al crear el producto'
-                    });
-        }
-/*
-
-        OBSOLETO PERO NO INUTIL
-
-        // Obtener un array con todos los "id" existentes ( hice esto porque al eliminar productos seguia sumando indefinido y necesitaba rellenar id)
-        const existingIds = products.map(p => p.id);
-
-        // Encontrar el primer "id" que falta
-        let newId = 1;
-        while (existingIds.includes(newId)) {
-                newId++;
-        }
-
-        // Verificar la existencia del "code" en productos existentes
-        const existingCodes = products.map(p => p.code);
-        if (existingCodes.includes(product.code)) {
-                return res.status(409).send({
-                        status: 'error',
-                        error: 'El producto con este código ya existe.'
                 });
         }
+        /*
 
-        // Asignar el "id" encontrado al producto
-        product.id = newId;
+                OBSOLETO PERO NO INUTIL
+
+                // Obtener un array con todos los "id" existentes ( hice esto porque al eliminar productos seguia sumando indefinido y necesitaba rellenar id)
+                const existingIds = products.map(p => p.id);
+
+                // Encontrar el primer "id" que falta
+                let newId = 1;
+                while (existingIds.includes(newId)) {
+                        newId++;
+                }
+
+                // Verificar la existencia del "code" en productos existentes
+                const existingCodes = products.map(p => p.code);
+                if (existingCodes.includes(product.code)) {
+                        return res.status(409).send({
+                                status: 'error',
+                                error: 'El producto con este código ya existe.'
+                        });
+                }
+
+                // Asignar el "id" encontrado al producto
+                product.id = newId;
 
 
-        await manager.addProducts(product);
+                await manager.addProducts(product);
 
-        
-        // status success
-        return res.send({
-                status: 'success',
-                message: 'product created',
-                product
-        })
-        */
+                
+                // status success
+                return res.send({
+                        status: 'success',
+                        message: 'product created',
+                        product
+                })
+                */
 });
 
 // Actualiza los productos
 
 router.put('/:pid', async (req, res) => {
 
-        const products = await manager.getProducts();
+        // por ahora queda obsoleto   const products = await manager.getProducts();
         // Productos que haremos con Postman
-        const product = req.body;
-        const productId = Number(req.params.pid);
 
-        if (!product.titulo || !product.descripcion || !product.precio || !product.thumbnail || !product.thumbnail || !product.code || !product.stock || !product.status || !product.category) {
+        const 
+               { pid }
+         = req.params;
+
+        const updateProduct = req.body;
+
+
+        if (!updateProduct.titulo || !updateProduct.descripcion || !updateProduct.precio || !updateProduct.thumbnail || !updateProduct.code || !updateProduct.stock || !updateProduct.status || !updateProduct.category) {
                 //Error del cliente
                 return res.status(400).send({
                         status: 'error',
@@ -164,6 +169,18 @@ router.put('/:pid', async (req, res) => {
                 })
         }
 
+        // agrego trycatch mientras no se usa el manager
+
+                const result = await productsModel.updateOne({ _id: pid }, updateProduct);
+
+                res.send({
+                        status: 'success',
+                        message: 'product updated',
+                        result
+                });
+      
+});
+/* CODIGO OBSLETO PARA ESTA ENTREGA
         const index = products.findIndex(product => product.id === productId);
 
         if (index !== 1) {
@@ -180,8 +197,8 @@ router.put('/:pid', async (req, res) => {
                         error: 'product not found'
                 })
         }
+*/
 
-});
 
 // Elimina los productos
 

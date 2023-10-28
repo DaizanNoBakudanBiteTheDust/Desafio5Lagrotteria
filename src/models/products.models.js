@@ -10,11 +10,7 @@ const productsSchema = new mongoose.Schema({
     thumbnail: String,
     code: String,
     stock: Number,
-    category: String,
-    id: {
-        type:Number,
-        unique: true
-    }
+    category: String
 })
 
 export const productsModel = mongoose.model(productCollection, productsSchema)
