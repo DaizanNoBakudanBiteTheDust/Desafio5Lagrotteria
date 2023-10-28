@@ -1,13 +1,15 @@
 import {
         Router
 } from 'express';
-import cartManager from '../../dao/fileManagers/cartManager.js';
+// import cartManager from '../../dao/fileManagers/cartManager.js';
 import {
         cartsFilePath
 } from '../../utils.js';
+import Carts from '../../dao/dbManagers/cart.manager.js';
 
-const manager = new cartManager(cartsFilePath);
+// MANAGER ANTIGUO const manager = new cartManager(cartsFilePath); 
 
+manager = new Carts(); // por ahora usaremos este
 
 const router = Router();
 
@@ -15,15 +17,152 @@ const router = Router();
 // traer todos los productos
 
 router.get('/', async (req, res) => {
-        const carts = await manager.getAll();
         res.send(carts)
+        try {
+                const carts = await manager.getAll();
+                return res.send({
+                        status: 'success',
+                        payload: carts
+                })
+        } catch (error) {
+                return res.status(500).send({
+                        status: 'error',
+                        message: error.message
+                });
+        }
+});
+
+
+router.post('/', async (req, res) => {
+        try {
+                const carts = await manager.getAll();
+                // Productos que haremos con Postman
+
+                const {
+                        titulo,
+                        descripcion,
+                        precio,
+                        thumbnail,
+                        code,
+                        stock,
+                        category
+                } = req.body;
+
+
+                if (!titulo, !descripcion || !precio || !thumbnail || !code || !stock || !category) {
+                        return res.status(500).send({
+                                status: 'error',
+                                message: 'incomplete'
+                        });
+                }
+                const result = await manager.save({
+                        titulo,
+                        descripcion,
+                        precio,
+                        thumbnail,
+                        code,
+                        stock,
+                        category
+                })
+
+                return res.send({
+                        status: 'success',
+                        payload: result
+                })
+
+                /* OBSOLETO POR AHORA
+                                 // const cart = req.body;
+
+                                // Obtener un array con todos los "id" existentes 
+                                const existingIds = carts.map(p => p.id);
+
+                                // Encontrar el primer "id" que falta
+                                let newId = 1;
+                                while (existingIds.includes(newId)) {
+                                        newId++;
+                                }
+
+                                // Asignar el "id" encontrado al producto
+                                cart.id = newId;
+
+                                if (!cart.products) {
+                                        // Error del cliente
+                                        return res.status(400).send({
+                                                status: 'error',
+                                                error: 'incomplete values'
+                                        });
+                                }
+
+
+                                await manager.addProducts(cart);
+                */
+
+                // status success
+
+        } catch (error) {
+                return res.status(500).send({
+                        status: 'error',
+                        message: error.message
+                });
+        }
+
+});
+
+
+router.put('/:id', async (req, res) => {
+        try {
+
+
+                const {
+                        titulo,
+                        descripcion,
+                        precio,
+                        thumbnail,
+                        code,
+                        stock,
+                        category
+                } = req.body;
+
+                const {id} = req.params;
+
+
+                if (!titulo, !descripcion || !precio || !thumbnail || !code || !stock || !category) {
+                        return res.status(500).send({
+                                status: 'error',
+                                message: 'incomplete'
+                        });
+                }
+                const result = await manager.update(id,{
+                        titulo,
+                        descripcion,
+                        precio,
+                        thumbnail,
+                        code,
+                        stock,
+                        category
+                });
+
+                return res.send({
+                        status: 'success',
+                        payload: result
+                })
+        } catch (error) {
+                return res.status(500).send({
+                        status: 'error',
+                        message: error.message
+                });
+        }
 });
 
 // Agrega params
 
-
+// Obsoleto por ahora
+/*
 router.get('/', async (req, res) => {
-        const carts = await manager.getAll();
+ 
+
+
+ const carts = await manager.getAll();
         const queryParamsLimited = (req.query.limit);
 
         if (!queryParamsLimited) {
@@ -34,6 +173,8 @@ router.get('/', async (req, res) => {
                 const productsLimited = carts.slice(0, queryParamsLimited)
                 res.send(productsLimited)
         };
+        
+
 });
 
 
@@ -46,46 +187,13 @@ router.get('/:cid', async (req, res) => {
      
        res.send(cart);
 });
-
+*/
 
 // postea los productos
 
-router.post('/', async (req, res) => {
-        const carts = await manager.getAll();
-        // Productos que haremos con Postman
-        const cart = req.body;
 
-        // Obtener un array con todos los "id" existentes 
-        const existingIds = carts.map(p => p.id);
-
-        // Encontrar el primer "id" que falta
-        let newId = 1;
-        while (existingIds.includes(newId)) {
-                newId++;
-        }
-
-        // Asignar el "id" encontrado al producto
-        cart.id = newId;
-
-        if (!cart.products) {
-                // Error del cliente
-                return res.status(400).send({
-                        status: 'error',
-                        error: 'incomplete values'
-                });
-        }
-
-
-        await manager.addProducts(cart);
-
-        // status success
-        return res.send({
-                status: 'success',
-                message: 'product created',
-                cart
-        })
-});
-
+/*
+Obsoleto por ahora
 
 router.post('/:cid/products/:pid', async (req, res) => {
 
@@ -146,6 +254,6 @@ router.post('/:cid/products/:pid', async (req, res) => {
         })
 
 });
-
+*/
 
 export default router;
