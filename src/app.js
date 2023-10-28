@@ -38,7 +38,7 @@ app.use(express.urlencoded({
 // Conexion DB
 try {
         // string de Conexion
-        await mongoose.connect('mongodb+srv://Glagrotteria:oaRHHBM4KzeYZAZI@eccomerce.62qj1ur.mongodb.net/eccomerce?retryWrites=true&w=majority'); 
+        await mongoose.connect('mongodb+srv://Glagrotteria:oaRHHBM4KzeYZAZI@eccomerce.62qj1ur.mongodb.net/eccomerce?retryWrites=true&w=majority');
         console.log("conectado")
 } catch (error) {
         console.log("conexion fallida")

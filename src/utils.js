@@ -6,6 +6,6 @@ const __dirname = dirname(__filename);
 
 export {__dirname};
 
-export const productsFilePath = join(__dirname, "./files/productos.json")
-export const cartsFilePath = join(__dirname, "./files/carrito.json");
+export const productsFilePath = join(__dirname, "./dao/fileManagers/files/productos.json")
+export const cartsFilePath = join(__dirname, "./dao/fileManagers/files/carrito.json");
 
