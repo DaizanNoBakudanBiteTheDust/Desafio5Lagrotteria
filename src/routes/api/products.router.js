@@ -3,7 +3,7 @@ import {
 } from 'express';
 import {
         productsModel
-} from '../../dao/fileManagers/dbManagers/models/products.models.js';
+} from '../../dao/dbManagers/models/products.models.js';
 import ProductManager from '../../dao/fileManagers/productManager.js';
 import {
         productsFilePath
