@@ -1,8 +1,10 @@
 import express from 'express';
 import handlebars from 'express-handlebars';
-import{
-        __dirname}
- from './utils.js';
+import mongoose from 'mongoose';
+import {
+        __dirname
+}
+from './utils.js';
 import {
         Server
 } from 'socket.io';
@@ -13,8 +15,11 @@ import viewsRouter from './routes/web/views.router.js';
 //para el socket
 
 import ProductManager from './managers/productManager.js';
-import { productsFilePath } from './utils.js';
+import {
+        productsFilePath
+} from './utils.js';
 const manager = new ProductManager(productsFilePath);
+
 
 // Crea server express
 const app = express();
@@ -30,6 +35,14 @@ app.use(express.urlencoded({
 }));
 
 
+// Conexion DB
+try {
+        // string de Conexion
+        await mongoose.connect('mongodb+srv://Glagrotteria:oaRHHBM4KzeYZAZI@eccomerce.62qj1ur.mongodb.net/eccomerce?retryWrites=true&w=majority'); 
+        console.log("conectado")
+} catch (error) {
+        console.log("conexion fallida")
+}
 // handlebars
 
 app.engine('handlebars', handlebars.engine());
@@ -56,20 +69,20 @@ app.set('socketio', io);
 
 
 io.on('connection', socket => {
-    
+
         //agrego producto via form
         socket.on('agregarProducto', async data => {
                 manager.addProducts(data);
                 io.emit('showProducts', await manager.getProducts());
         });
-    
+
         //elimino via form que me pasa el cliente
         socket.on('eliminarProducto', async (data) => {
-         
+
                 const id = Number(data)
                 await manager.deleteProductById(id);
                 io.emit('showProducts', await manager.getProducts());
-          
+
         });
-    
-    });
+
+});

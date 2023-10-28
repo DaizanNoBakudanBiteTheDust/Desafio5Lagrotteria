@@ -1,18 +1,26 @@
 import {
         Router
 } from 'express';
-import { productsModel } from '../../models/products.models.js';
+import {
+        productsModel
+} from '../../models/products.models.js';
 import ProductManager from '../../managers/productManager.js';
-import { productsFilePath } from '../../utils.js';
+import {
+        productsFilePath
+} from '../../utils.js';
 const manager = new ProductManager(productsFilePath);
 
 
 const router = Router();
 
 
+//read
+
 router.get('/', async (req, res) => {
         const products = await productsModel.find();
-        res.send({products})
+        res.send({
+                products
+        })
 });
 
 // traer todos los productos (antiguo)
@@ -50,9 +58,8 @@ router.get('/', async (req, res) => {
 
 router.post('/', async (req, res) => {
 
-        const products = await manager.getProducts();
+        // por ahora queda obsoleto        const products = await manager.getProducts();
         const io = req.app.get('socketio');
-
         const product = req.body;
 
         if (!product.titulo || !product.descripcion || !product.precio || !product.thumbnail || !product.thumbnail || !product.code || !product.stock || !product.category) {
@@ -62,6 +69,49 @@ router.post('/', async (req, res) => {
                         error: 'incomplete values'
                 })
         }
+
+        // lo utilizare por ahora pero esto debiera traerlo  manager
+
+        try {
+                const existingProduct = await productsModel.findOne({
+                        code: product.code
+                });
+
+                if (existingProduct) {
+                        return res.status(409).send({
+                                status: 'error',
+                                error: 'El producto con este código ya existe.'
+                        });
+                }
+
+                // Crea un nuevo documento utilizando productsModel.Create
+                const createdProduct = await productsModel.create({
+                        titulo: product.titulo,
+                        descripcion: product.descripcion,
+                        precio: product.precio,
+                        thumbnail: product.thumbnail,
+                        code: product.code,
+                        stock: product.stock,
+                        category: product.category
+                });
+
+                io.emit('showProducts', createdProduct);
+
+                return res.send({
+                        status: 'success',
+                        message: 'product created',
+                        product
+                })
+
+        } catch (error) {
+                return res.status(500).send({
+                        status: 'error',
+                        error: error.message || 'Error al crear el producto'
+                    });
+        }
+/*
+
+        OBSOLETO PERO NO INUTIL
 
         // Obtener un array con todos los "id" existentes ( hice esto porque al eliminar productos seguia sumando indefinido y necesitaba rellenar id)
         const existingIds = products.map(p => p.id);
@@ -75,10 +125,10 @@ router.post('/', async (req, res) => {
         // Verificar la existencia del "code" en productos existentes
         const existingCodes = products.map(p => p.code);
         if (existingCodes.includes(product.code)) {
-            return res.status(409).send({
-                status: 'error',
-                error: 'El producto con este código ya existe.'
-            });
+                return res.status(409).send({
+                        status: 'error',
+                        error: 'El producto con este código ya existe.'
+                });
         }
 
         // Asignar el "id" encontrado al producto
@@ -86,14 +136,15 @@ router.post('/', async (req, res) => {
 
 
         await manager.addProducts(product);
-        const updatedProducts = await manager.getProducts();
-                io.emit('showProducts', updatedProducts);
+
+        
         // status success
         return res.send({
                 status: 'success',
                 message: 'product created',
                 product
         })
+        */
 });
 
 // Actualiza los productos
@@ -135,7 +186,7 @@ router.put('/:pid', async (req, res) => {
 // Elimina los productos
 
 router.delete('/:pid', async (req, res) => {
-         
+
         const products = await manager.getProducts();
         const io = req.app.get('socketio');
         const productId = Number(req.params.pid);
